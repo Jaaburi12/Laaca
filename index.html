@@ -3094,8 +3094,7 @@
         createPriceChart(); // Fallback to sample chart
       }
     }
-
-      function openSendWizard() {
+        function openSendWizard() {
     document.getElementById("sendWizard").style.display = "block";
     showStep(1);
   }
@@ -3187,10 +3186,6 @@
     }
   }
 
-document.getElementById('btnSend').onclick = function() {
-  document.getElementById('sendWizard').style.display = 'block';
-  document.getElementById('wizardOverlay').style.display = 'block';
-};
 function swapTradeAssets() {
   // Hel labada asset box
   const assetBoxes = document.querySelectorAll(".trade-asset-selector .asset-box");

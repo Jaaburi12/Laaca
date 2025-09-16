@@ -3095,34 +3095,6 @@
       }
     }
 
-    // Swap button logic
-    document.getElementById('btnSwap').addEventListener('click', function() {
-      openTradeModal('buy');
-      (async () => {
-        try {
-          const ob = await fetchLaamPrice();
-          if (ob && ob.ask) {
-            document.getElementById('modalPrice').value = parseFloat(ob.ask).toFixed(7);
-            calculateTotal();
-          }
-        } catch (e) {
-          console.warn('Could not prefill price for swap:', e);
-        }
-      })();
-    });
-
-    // Allow swapping direction by clicking the swap icon
-    const swapIcon = document.getElementById('swapAssets');
-    if (swapIcon) {
-      swapIcon.addEventListener('click', () => {
-        const assetBoxes = document.querySelectorAll('.trade-asset-selector .asset-box');
-        if (assetBoxes.length === 2) {
-          const left = assetBoxes[0].innerHTML;
-          assetBoxes[0].innerHTML = assetBoxes[1].innerHTML;
-          assetBoxes[1].innerHTML = left;
-        }
-      });
-    }
       function openSendWizard() {
     document.getElementById("sendWizard").style.display = "block";
     showStep(1);
@@ -3141,7 +3113,22 @@
       document.getElementById("confirmMemo").textContent = document.getElementById("sendMemo").value || "—";
     }
   }
+function swapTradeAssets() {
+  // Hel labada asset box
+  const assetBoxes = document.querySelectorAll(".trade-asset-selector .asset-box");
 
+  if (assetBoxes.length === 2) {
+    const firstBox = assetBoxes[0];
+    const secondBox = assetBoxes[1];
+
+    // Ku keydi copy of firstBox HTML
+    const tempHTML = firstBox.innerHTML;
+
+    // Swap contents
+    firstBox.innerHTML = secondBox.innerHTML;
+    secondBox.innerHTML = tempHTML;
+  }
+}
   function nextStep(step) {
     showStep(step);
   }
@@ -3214,22 +3201,7 @@
       btn.disabled = false;
     }
   }
-function swapTradeAssets() {
-  // Hel labada asset box
-  const assetBoxes = document.querySelectorAll(".trade-asset-selector .asset-box");
 
-  if (assetBoxes.length === 2) {
-    const firstBox = assetBoxes[0];
-    const secondBox = assetBoxes[1];
-
-    // Ku keydi copy of firstBox HTML
-    const tempHTML = firstBox.innerHTML;
-
-    // Swap contents
-    firstBox.innerHTML = secondBox.innerHTML;
-    secondBox.innerHTML = tempHTML;
-  }
-}
 document.getElementById('btnSend').onclick = function() {
   document.getElementById('sendWizard').style.display = 'block';
   document.getElementById('wizardOverlay').style.display = 'block';

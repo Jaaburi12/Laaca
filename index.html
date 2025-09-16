@@ -869,7 +869,7 @@
               <div class="asset-issuer">laam.online</div>
             </div>
           </div>
-          <span class="swap-icon" id="swapAssets">⇄</span>
+          <span class="swap-icon" id="swapAssets" onclick="swapTradeAssets()">⇄</span>
           <div class="asset-box">
             <img src="https://res.coinpaper.com/coinpaper/stellar_xlm_logo_07021d63c0.png" alt="XLM">
             <div>
@@ -2835,35 +2835,23 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
   });
 }
 
-// Swap button logic
-document.getElementById('btnSwap').addEventListener('click', function() {
-  openTradeModal('buy');
-  (async () => {
-    try {
-      const ob = await fetchLaamPrice();
-      if (ob && ob.ask) {
-        document.getElementById('modalPrice').value = parseFloat(ob.ask).toFixed(7);
-        calculateTotal();
-      }
-    } catch (e) {
-      console.warn('Could not prefill price for swap:', e);
-    }
-  })();
-});
+function swapTradeAssets() {
+  // Hel labada asset box
+  const assetBoxes = document.querySelectorAll(".trade-asset-selector .asset-box");
 
-// Allow swapping direction by clicking the swap icon
-const swapIcon = document.getElementById('swapAssets');
-if (swapIcon) {
-  swapIcon.addEventListener('click', () => {
-    const assetBoxes = document.querySelectorAll('.trade-asset-selector .asset-box');
-    if (assetBoxes.length === 2) {
-      const left = assetBoxes[0].innerHTML;
-      assetBoxes[0].innerHTML = assetBoxes[1].innerHTML;
-      assetBoxes[1].innerHTML = left;
-    }
-  });
+  if (assetBoxes.length === 2) {
+    const firstBox = assetBoxes[0];
+    const secondBox = assetBoxes[1];
+
+    // Ku keydi copy of firstBox HTML
+    const tempHTML = firstBox.innerHTML;
+
+    // Swap contents
+    firstBox.innerHTML = secondBox.innerHTML;
+    secondBox.innerHTML = tempHTML;
+  }
 }
-
+</script>
 </script>             
 </body>
 </html>

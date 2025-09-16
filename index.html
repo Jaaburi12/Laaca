@@ -775,13 +775,6 @@
             font-weight: 600;
         }
         
-        /* Send Wizard Styles */
-
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
-    padding: 30px;
-  }
 
   /* Send Button */
   .send-btn {
@@ -1210,12 +1203,6 @@
             <div class="action-text">Receive</div>
           </div>
         </div>
-        
-        <div class="action-buttons">
-          <div class="action-button swap" id="btnSwap">
-            <div class="action-icon">⇄</div>
-            <div class="action-text">Swap</div>
-          </div>
           <div class="action-button trustline" id="addTrustlineBtn">
             <div class="action-icon">+</div>
             <div class="action-text">Add Trustline</div>
@@ -1280,7 +1267,7 @@
               <div class="asset-issuer">laam.online</div>
             </div>
           </div>
-          <span class="swap-icon" id="swapAssets">⇄</span>
+          <span class="swap-icon" id="swapAssets" onclick="swapTradeAssets()">⇄</span>
           <div class="asset-box">
             <img src="https://res.coinpaper.com/coinpaper/stellar_xlm_logo_07021d63c0.png" alt="XLM">
             <div>
@@ -3252,7 +3239,23 @@
       btn.disabled = false;
     }
   }
- </script>
-  </script>
+function swapTradeAssets() {
+  // Hel labada asset box
+  const assetBoxes = document.querySelectorAll(".trade-asset-selector .asset-box");
+
+  if (assetBoxes.length === 2) {
+    const firstBox = assetBoxes[0];
+    const secondBox = assetBoxes[1];
+
+    // Ku keydi copy of firstBox HTML
+    const tempHTML = firstBox.innerHTML;
+
+    // Swap contents
+    firstBox.innerHTML = secondBox.innerHTML;
+    secondBox.innerHTML = tempHTML;
+  }
+}
+</script>
+</script>
 </body>
 </html>

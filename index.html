@@ -849,6 +849,44 @@
         <button id="btnSend" style="margin-top:10px;">Send Now</button>
     </div>
        </div>
+        
+        <div class="assets-grid">
+            <!-- XLM Token -->
+            <div class="asset-item">
+                <div class="asset-icon xlm">
+                    <img src="https://res.coinpaper.com/coinpaper/stellar_xlm_logo_07021d63c0.png" alt="XLM">
+                </div>
+                <div class="asset-details">
+                    <div class="asset-name">XLM</div>
+                    <div class="asset-balance"><span id="xlmBal">1,250.50</span></div>
+                    <div class="asset-price">$<span id="xlmUsd">511.45</span> ($<span id="xlmPrice">0.409</span>/XLM)</div>
+                </div>
+            </div>
+            
+            <!-- LAAM Token -->
+            <div class="asset-item">
+                <div class="asset-icon laam">
+                    <img src="https://i.ibb.co/r28SP1bN/20250802-225108.png" alt="LAAM">
+                </div>
+                <div class="asset-details">
+                    <div class="asset-name">Laam</div>
+                    <div class="asset-balance"><span id="laamBal">8,420.75</span></div>
+                    <div class="asset-price">$<span id="laamUsd">471.56</span> ($<span id="laamPrice">0.056</span>/Laam)</div>
+                </div>
+            </div>
+            
+            <!-- USDC Token -->
+            <div class="asset-item">
+                <div class="asset-icon usdc">
+                    <img src="https://i.ibb.co/r2qNFs22/images-2.png" alt="USDC">
+                </div>
+                <div class="asset-details">
+                    <div class="asset-name">USDC</div>
+                    <div class="asset-balance"><span id="usdcBal">265.74</span></div>
+                    <div class="asset-price">$<span id="usdcUsd">265.74</span> ($<span id="usdcPrice">1.00</span>/USDC)</div>
+                </div>
+            </div>
+        </div>
 
       <!-- Enhanced Trade Section -->
       <div class="card trade-card">
@@ -1584,13 +1622,15 @@ function switchTab(tabName) {
       }
     }
 
-// Update total assets value - FIXED CALCULATION
-function updateTotalAssets() {
-    const xlmUsd = parseFloat(document.getElementById('xlmUsd').textContent) || 0;
-    const laamUsd = parseFloat(document.getElementById('laamUsd').textContent) || 0;
-    const totalAssets = (xlmUsd + laamUsd).toFixed(2);
-    document.getElementById('totalAssets').textContent = totalAssets;
-}
+    // Update total assets value
+    function updateTotalAssets() {
+      const xlmUsd = parseFloat(document.getElementById('xlmUsd').textContent) || 0;
+      const laamUsd = parseFloat(document.getElementById('laamUsd').textContent) || 0;
+      const usdcUsd = parseFloat(document.getElementById('usdcUsd').textContent) || 0;
+      const totalAssets = (xlmUsd + laamUsd + usdcUsd).toFixed(2);
+      document.getElementById('totalAssets').textContent = totalAssets;
+    }
+      
       // Helper: get best sell offer price (qiimaha iibka ugu fiican)
 async function getBestSellOfferPrice() {
   try {
@@ -1609,68 +1649,64 @@ async function getBestSellOfferPrice() {
 }          
  // Update balance display function
 async function updateBalanceDisplay() {
-  if (!currentKeypair || !server) {
-    console.log('No keypair or server available');
-    return;
-  }
-
-  try {
-    console.log('Loading account data...');
-    const account = await server.loadAccount(currentKeypair.publicKey());
-    
-    let xlmBalance = 0;
-    let laamBalance = 0;
-
-    account.balances.forEach(balance => {
-      if (balance.asset_type === 'native') {
-        xlmBalance = parseFloat(balance.balance);
-      } else if (
-        balance.asset_code === LAAM_TOKEN.code &&
-        balance.asset_issuer === LAAM_TOKEN.issuer
-      ) {
-        laamBalance = parseFloat(balance.balance);
+      if (!currentKeypair || !server) {
+        console.log('No keypair or server available');
+        return;
       }
-    });
 
-    // ✅ XLM part
-    document.getElementById('xlmBal').textContent = xlmBalance.toFixed(2);
-    document.getElementById('xlmUsd').textContent = (xlmBalance * xlmPriceUSD).toFixed(2);
-    document.getElementById('xlmPrice').textContent = xlmPriceUSD.toFixed(3);
+      try {
+        console.log('Loading account data...');
+        const account = await server.loadAccount(currentKeypair.publicKey());
+        
+        let xlmBalance = 0;
+        let laamBalance = 0;
+        let usdcBalance = 0;
 
-    // ✅ Laam part - Qiimaha USD ee Laam token-ka
-    const bestSellOfferXLM = await getBestSellOfferPrice();
-    const laamPriceUSD = bestSellOfferXLM * xlmPriceUSD;
-    
-    LAAM_TOKEN.currentPrice = laamPriceUSD;
+        account.balances.forEach(balance => {
+          if (balance.asset_type === 'native') {
+            xlmBalance = parseFloat(balance.balance);
+          } else if (
+            balance.asset_code === LAAM_TOKEN.code &&
+            balance.asset_issuer === LAAM_TOKEN.issuer
+          ) {
+            laamBalance = parseFloat(balance.balance);
+          } else if (
+            balance.asset_code === USDC_TOKEN.code &&
+            balance.asset_issuer === USDC_TOKEN.issuer
+          ) {
+            usdcBalance = parseFloat(balance.balance);
+          }
+        });
 
-    document.getElementById('laamBal').textContent = laamBalance.toFixed(2);
-    
-    // HALKAN WAA ISBEDDELKA: Qiimaha Laam USD ahaan
-    document.getElementById('laamUsd').textContent = (laamBalance * laamPriceUSD).toFixed(2);
-    document.getElementById('laamPrice').textContent =laamPriceUSD.toFixed(6);
-    
-      updateTotalAssets();
-      
-    console.log('Balance display updated successfully');
-    
-  } catch (error) {
-    console.error('Error updating balance display:', error);
-    showError('Failed to load account balance: ' + error.message);
-  }
+        // XLM part
+        document.getElementById('xlmBal').textContent = xlmBalance.toFixed(2);
+        document.getElementById('xlmUsd').textContent = (xlmBalance * xlmPriceUSD).toFixed(2);
+        document.getElementById('xlmPrice').textContent = xlmPriceUSD.toFixed(3);
+
+        // Laam part - USD value of Laam token
+        const bestSellOfferXLM = await getBestSellOfferPrice();
+        const laamPriceUSD = bestSellOfferXLM * xlmPriceUSD;
+        
+        LAAM_TOKEN.currentPrice = laamPriceUSD;
+
+        document.getElementById('laamBal').textContent = laamBalance.toFixed(2);
+        document.getElementById('laamUsd').textContent = (laamBalance * laamPriceUSD).toFixed(2);
+        document.getElementById('laamPrice').textContent = laamPriceUSD.toFixed(6);
+
+        // USDC part
+        document.getElementById('usdcBal').textContent = usdcBalance.toFixed(2);
+        document.getElementById('usdcUsd').textContent = usdcBalance.toFixed(2); // USDC is 1:1 with USD
+        document.getElementById('usdcPrice').textContent = "1.00";
+        
+        updateTotalAssets();
+        
+        console.log('Balance display updated successfully');
+        
+      } catch (error) {
+        console.error('Error updating balance display:', error);
+        showError('Failed to load account balance: ' + error.message);
+      }
 }
-  
-
-// Update total assets value - WITH NULL CHECK
-function updateTotalAssets() {
-  // Check if elements exist before updating them
-  if (document.getElementById('xlmUsd') && document.getElementById('laamUsd') && document.getElementById('totalAssets')) {
-    const xlmUsd = parseFloat(document.getElementById('xlmUsd').textContent) || 0;
-    const laamUsd = parseFloat(document.getElementById('laamUsd').textContent) || 0;
-    const totalAssets = (xlmUsd + laamUsd).toFixed(2);
-    document.getElementById('totalAssets').textContent = totalAssets;
-  }
-}
-
 // Load wallet function - WITH NULL CHECK
 async function loadWallet() {
   if (!currentKeypair) {

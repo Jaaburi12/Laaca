@@ -1081,6 +1081,7 @@
   <div class="total-label">Total assets</div>
   <div class="total-value">$<span id="totalAssets">0</span></div>
 </div>
+!-- Overlay -->
 <div id="wizardOverlay"></div>
 
 <!-- Wizard Modal -->
@@ -1089,6 +1090,7 @@
 
   <!-- Step 1 -->
   <div id="step1">
+    <h3>Step 1: Choose Asset</h3>
     <label>Select Token</label>
     <select id="sendAsset">
       <option value="XLM">XLM</option>
@@ -1104,7 +1106,6 @@
   <!-- Step 2 -->
   <div id="step2" style="display:none;">
     <h3>Step 2: Enter Amount</h3>
-    <label>Amount</label>
     <input type="number" id="sendAmount" placeholder="0.00">
     <div class="btn-group">
       <button class="wizard-btn secondary" onclick="backStep(1)">Back</button>
@@ -1115,10 +1116,8 @@
   <!-- Step 3 -->
   <div id="step3" style="display:none;">
     <h3>Step 3: Destination</h3>
-    <label>Destination Address</label>
     <input type="text" id="sendDest" placeholder="Enter Stellar address">
-    <label>Memo (optional)</label>
-    <input type="text" id="sendMemo" placeholder="Memo">
+    <input type="text" id="sendMemo" placeholder="Memo (optional)">
     <div class="btn-group">
       <button class="wizard-btn secondary" onclick="backStep(2)">Back</button>
       <button class="wizard-btn primary" onclick="nextStep(4)">Next</button>
@@ -1134,7 +1133,7 @@
     <p><strong>Memo:</strong> <span id="confirmMemo"></span></p>
     <div class="btn-group">
       <button class="wizard-btn secondary" onclick="backStep(3)">Back</button>
-      <button class="wizard-btn confirm" onclick="sendTransaction()">Send Now</button>
+      <button id="confirmSendBtn" class="wizard-btn confirm" onclick="sendTransaction()">Send Now</button>
     </div>
   </div>
 </div>
@@ -1158,7 +1157,6 @@
     <div class="action-text">Lock</div>
   </div>
 </div>
-
 
         <div class="assets-grid">
             <!-- XLM Token -->
@@ -3100,38 +3098,52 @@ function swapTradeAssets() {
     secondBox.innerHTML = tempHTML;
   }
 }
-    function openSendWizard() {
-    document.getElementById("sendWizard").style.display = "block";
-    showStep(1);
-  }
-function closeWizard() {
-    document.getElementById("sendWizard").style.display = "none";
-    document.getElementById("wizardOverlay").style.display = "none";
-}
-  function showStep(step) {
-    for (let i = 1; i <= 4; i++) {
-      document.getElementById("step" + i).style.display = "none";
-    }
-    document.getElementById("step" + step).style.display = "block";
+// Horizon Mainnet
+  const server = new StellarSdk.Server("https://horizon.stellar.org");
 
-    if (step === 4) {
+  // Replace with your real keypair (demo only)
+  const currentKeypair = StellarSdk.Keypair.fromSecret("YOUR_SECRET_KEY_HERE");
+
+  // Assets
+  const LAAM_ASSET = new StellarSdk.Asset("Laam", "GAL4ECDAXNBMJYFCWIJ32HKVIRLCNEXY664CAZYI3EINQWPLXTMEPR64");
+  const USDC_ASSET = new StellarSdk.Asset("USDC", "GA5ZSEJYB37JRC5AVNFVYYXAY7CSWGPBY2QFITX6QJVRKD7VJBU2SOUG");
+
+  // Wizard steps
+  function showStep(step){
+    for(let i=1;i<=4;i++) document.getElementById("step"+i).style.display="none";
+    if(step>=1) document.getElementById("step"+step).style.display="block";
+    if(step===4){
       document.getElementById("confirmAsset").textContent = document.getElementById("sendAsset").value;
       document.getElementById("confirmAmount").textContent = document.getElementById("sendAmount").value;
       document.getElementById("confirmDest").textContent = document.getElementById("sendDest").value;
       document.getElementById("confirmMemo").textContent = document.getElementById("sendMemo").value || "—";
     }
   }
-
-  function nextStep(step) {
-    showStep(step);
+  function nextStep(step){ showStep(step); }
+  function backStep(step){
+    if(step<1){
+      document.getElementById("sendWizard").style.display="none";
+      document.getElementById("wizardOverlay").style.display="none";
+    } else showStep(step);
   }
 
-  function backStep(step) {
-    showStep(step);
+  // Open wizard
+  document.getElementById("btnSend").onclick = function(){
+    document.getElementById("sendWizard").style.display="block";
+    document.getElementById("wizardOverlay").style.display="block";
+    showStep(1);
+  }
+  // Close wizard
+  document.getElementById("wizardOverlay").onclick = closeWizard;
+  document.getElementById("wizardClose").onclick = closeWizard;
+
+  function closeWizard(){
+    document.getElementById("sendWizard").style.display="none";
+    document.getElementById("wizardOverlay").style.display="none";
   }
 
-  // Send transaction (same code as hore)
-  async function sendTransaction() {
+  // Send Transaction
+  async function sendTransaction(){
     const asset = document.getElementById("sendAsset").value;
     const amount = document.getElementById("sendAmount").value;
     const destination = document.getElementById("sendDest").value;
@@ -3145,23 +3157,17 @@ function closeWizard() {
       const account = await server.loadAccount(currentKeypair.publicKey());
 
       let operation;
-      if (asset === "XLM") {
+      if(asset === "XLM"){
         operation = StellarSdk.Operation.payment({
-          destination: destination,
-          asset: StellarSdk.Asset.native(),
-          amount: amount
+          destination, asset: StellarSdk.Asset.native(), amount
         });
-      } else if (asset === "LAAM") {
+      } else if(asset === "LAAM"){
         operation = StellarSdk.Operation.payment({
-          destination: destination,
-          asset: LAAM_ASSET,
-          amount: amount
+          destination, asset: LAAM_ASSET, amount
         });
-      } else if (asset === "USDC") {
+      } else if(asset === "USDC"){
         operation = StellarSdk.Operation.payment({
-          destination: destination,
-          asset: USDC_ASSET,
-          amount: amount
+          destination, asset: USDC_ASSET, amount
         });
       }
 
@@ -3170,23 +3176,17 @@ function closeWizard() {
         networkPassphrase: StellarSdk.Networks.PUBLIC
       });
 
-      if (memo) {
-        txBuilder.addMemo(StellarSdk.Memo.text(memo));
-      }
+      if(memo){ txBuilder.addMemo(StellarSdk.Memo.text(memo)); }
 
-      const transaction = txBuilder
-        .addOperation(operation)
-        .setTimeout(180)
-        .build();
-
+      const transaction = txBuilder.addOperation(operation).setTimeout(180).build();
       transaction.sign(currentKeypair);
+
       const result = await server.submitTransaction(transaction);
 
       alert("✅ Success! Hash: " + result.hash);
-      document.getElementById("sendWizard").style.display = "none";
-      await updateBalanceDisplay();
+      closeWizard();
 
-    } catch (err) {
+    } catch(err){
       console.error("Send error:", err);
       alert("❌ Failed: " + err.message);
     } finally {

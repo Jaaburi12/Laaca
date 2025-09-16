@@ -1117,10 +1117,9 @@
   <div class="total-label">Total assets</div>
   <div class="total-value">$<span id="totalAssets">0</span></div>
 </div>
-          <!-- Wizard modal (overlay) -->
-<div id="wizardOverlay"></div>
+<!-- Wizard modal (overlay) -->
 <div id="sendWizard" class="send-wrap">
-  !-- Step 1: Choose Asset -->
+  <!-- Step 1: Choose Asset -->
   <div id="step1">
     <h3>Step 1: Choose Asset</h3>
     <label>Select Token</label>
@@ -3231,6 +3230,10 @@ function swapTradeAssets() {
     secondBox.innerHTML = tempHTML;
   }
 }
+document.getElementById('btnSend').onclick = function() {
+  document.getElementById('sendWizard').style.display = 'block';
+  document.getElementById('wizardOverlay').style.display = 'block';
+};
 </script>
 </script>
 </body>

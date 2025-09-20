@@ -804,81 +804,109 @@
     background: #1565c0;
   }
 
-  /* Overlay */
-  #wizardOverlay {
-    display: none;
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 999;
-  }
+    /* Overlay */
+#wizardOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  /* Wizard */
-  .send-wrap {
-    display: none;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 450px;
-    margin: 50px auto;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    position: relative;
-    z-index: 1000;
-  }
+/* Modal wrap */
+.send-wrap {
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 420px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+  animation: fadeIn .3s ease;
+}
 
-  .send-wrap h3 {
-    margin-top:0;
-    margin-bottom:12px;
-    color:#333;
-  }
+/* Close button */
+#sendWizard #wizardClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #fff;
+  cursor: pointer;
+}
 
-  input, select {
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    margin-bottom:15px;
-    font-size:16px;
-  }
+/* Steps */
+#sendWizard h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+}
 
-  .wizard-btn {
-    flex:1;
-    padding:10px 16px;
-    border:none;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.3s;
-  }
-  .wizard-btn.primary {
-    background:#1976d2;
-    color:white;
-  }
-  .wizard-btn.primary:hover {
-    background:#1565c0;
-  }
-  .wizard-btn.secondary {
-    background:#6c757d;
-    color:white;
-  }
-  .wizard-btn.secondary:hover {
-    background:#5a6268;
-  }
-  .wizard-btn.confirm {
-    background:#28a745;
-    color:white;
-  }
-  .wizard-btn.confirm:hover {
-    background:#218838;
-  }
+#sendWizard input, 
+#sendWizard select {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
 
-  .btn-group {
-    display:flex;
-    gap:10px;
-  }
+/* Button group */
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.wizard-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.wizard-btn.primary {
+  background: #007aff;
+  color: #fff;
+}
+.wizard-btn.primary:hover {
+  background: #005fcc;
+}
+
+.wizard-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.wizard-btn.secondary:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.wizard-btn.confirm {
+  background: #4cd964;
+  color: #fff;
+}
+.wizard-btn.confirm:hover {
+  background: #38b64c;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
 
         
         @media (max-width: 480px) {

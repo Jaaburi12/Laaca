@@ -1372,11 +1372,7 @@ wizardOverlay {
     </div>
   </div>
 </div>
-          <!-- Receive Wizard -->
-<div id="receiveWizard">
-    <button class="copy-btn" onclick="copyAddress()">
-</div>
-          
+      
     <div class="action-buttons">
   <div class="action-button send" id="btnSend">
     <div class="action-icon">➤</div>
@@ -3598,9 +3594,9 @@ function nextStep(step) {
 // Back step
 function backStep(step) {
     if(step < 1) {
-        closeWizard();
+        showStep(step)
     } else {
-        showStep(step);
+        closeWizard();
     }
 }
 

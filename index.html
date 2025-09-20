@@ -3425,7 +3425,7 @@ async function updateBalanceDisplay() {
 
       const result = await server.submitTransaction(transaction);
 
-      alert("✅ Success! Hash: " + result.hash);
+     showSuccess('Transaction sent successfully!');
       closeWizard();
 
     } catch(err){

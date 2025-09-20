@@ -859,7 +859,12 @@ wizardOverlay {
   background: rgba(255,255,255,0.1);
   color: #fff;
 }
-
+#confirmDest {
+  display: inline-block;
+  word-break: break-all;   /* jebin xaraf kasta haddii uu dhaafo */
+  overflow-wrap: anywhere; /* taageero dheeraad ah */
+  max-width: 100%;         /* ha ka bixin box-kiisa */
+}
 /* Button group */
 .btn-group {
   display: flex;
@@ -1356,7 +1361,10 @@ wizardOverlay {
     <h3>Step 4: Confirm Transaction</h3>
     <p><strong>Asset:</strong> <span id="confirmAsset"></span></p>
     <p><strong>Amount:</strong> <span id="confirmAmount"></span></p>
-    <p><strong>Destination:</strong> <span id="confirmDest"></span></p>
+    <p><strong>Destination:</strong> 
+   <span id="confirmDest" 
+         style="display:inline-block; word-break:break-all; max-width:100%;"></span>
+    </p>
     <p><strong>Memo:</strong> <span id="confirmMemo"></span></p>
     <div class="btn-group">
       <button class="wizard-btn secondary" onclick="backStep(3)">Back</button>
